@@ -1,0 +1,10 @@
+{% func HttpConfig(config NginxConfig) %}
+server {
+        listen 80;
+        listen [::]:80;
+        server_name {% for _, e := range config.ServerNames %}{%s= e  %} {% endfor %};
+        location / {
+            root /tmp/nginx-confgen/{%s= config.ServerNames[0] %}/
+        }
+}
+{% endfunc %}
