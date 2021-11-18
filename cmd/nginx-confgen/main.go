@@ -61,9 +61,6 @@ func main() {
 	}
 
 	if *generateLeSSL {
-		if err := os.MkdirAll("/tmp/nginx-confgen/"+serversList[0], 0744); err != nil {
-			log.Fatal("can't create temp directory:", err)
-		}
 		if err := os.WriteFile(*nginxConfDir+serversList[0]+".conf", []byte(templates.HttpConfig(resultConfig)), 0744); err != nil {
 			log.Fatal("can't create http config file:", err)
 		}
@@ -80,9 +77,12 @@ func main() {
 		if err := leCmd.Run(); err != nil {
 			log.Fatal("can't generate cert with certbot:", err)
 		}
+		if err := os.Remove(*nginxConfDir+serversList[0]+".conf"); err != nil {
+			log.Warningln("can't remove", *nginxConfDir+serversList[0]+".conf", "file, skipping")
+		}
 	}
 
-	if err := os.WriteFile(*nginxConfDir+"/"+serversList[0]+".conf", []byte(templates.HttpsConfig(resultConfig)), 0744); err != nil {
+	if err := os.WriteFile(*nginxConfDir+serversList[0]+".conf", []byte(templates.HttpsConfig(resultConfig)), 0744); err != nil {
 		log.Fatal("can't create https config file:", err)
 	}
 
