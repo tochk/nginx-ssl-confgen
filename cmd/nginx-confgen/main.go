@@ -12,7 +12,7 @@ import (
 
 var (
 	nginxConfDir        = flag.String("nginx-conf-dir", "/etc/nginx/sites-available/", "nginx sites available directory")
-	nginxConfDirEnabled = flag.String("nginx-conf-dir", "/etc/nginx/sites-available/", "nginx sites enabled directory")
+	nginxConfDirEnabled = flag.String("nginx-conf-dir-enabled", "/etc/nginx/sites-available/", "nginx sites enabled directory")
 	servers             = flag.String("servers", "", "comma-separeted domains list")
 	proxyPass           = flag.String("proxy-pass", "", "proxy pass server")
 	localDir            = flag.String("local-dir", "", "http files directory")
