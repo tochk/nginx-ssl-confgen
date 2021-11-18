@@ -11,15 +11,16 @@ import (
 )
 
 var (
-	nginxConfDir  = flag.String("nginx-conf-dir", "/etc/nginx/sites-available/", "nginx configuration directory")
-	servers       = flag.String("servers", "", "comma-separeted domains list")
-	proxyPass     = flag.String("proxy-pass", "", "proxy pass server")
-	localDir      = flag.String("local-dir", "", "http files directory")
-	sslFullChain  = flag.String("ssl-full-chain", "", "ssl full chain path")
-	sslPrivateKey = flag.String("ssl-private-key", "", "ssl private key path")
-	generateLeSSL = flag.Bool("generate-ssl", false, "generate letsencrypt certificate")
-	email         = flag.String("email", "", "email for letsencrypt")
-	agreeLeTos    = flag.Bool("agree-tos", false, "let's encrypt terms of service agreement")
+	nginxConfDir        = flag.String("nginx-conf-dir", "/etc/nginx/sites-available/", "nginx sites available directory")
+	nginxConfDirEnabled = flag.String("nginx-conf-dir", "/etc/nginx/sites-available/", "nginx sites enabled directory")
+	servers             = flag.String("servers", "", "comma-separeted domains list")
+	proxyPass           = flag.String("proxy-pass", "", "proxy pass server")
+	localDir            = flag.String("local-dir", "", "http files directory")
+	sslFullChain        = flag.String("ssl-full-chain", "", "ssl full chain path")
+	sslPrivateKey       = flag.String("ssl-private-key", "", "ssl private key path")
+	generateLeSSL       = flag.Bool("generate-ssl", false, "generate letsencrypt certificate")
+	email               = flag.String("email", "", "email for letsencrypt")
+	agreeLeTos          = flag.Bool("agree-tos", false, "let's encrypt terms of service agreement")
 )
 
 func main() {
@@ -61,12 +62,6 @@ func main() {
 	}
 
 	if *generateLeSSL {
-		if err := os.WriteFile(*nginxConfDir+serversList[0]+".conf", []byte(templates.HttpConfig(resultConfig)), 0744); err != nil {
-			log.Fatal("can't create http config file:", err)
-		}
-		if err := RestartNginx(); err != nil {
-			log.Fatal("can't restart nginx:", err)
-		}
 		leArgs := make([]string, 0, (len(serversList)*2)+3)
 		leArgs = append(leArgs, "--non-interactive", "--agree-tos", "--nginx", "--email", *email)
 		for _, srv := range serversList {
@@ -77,13 +72,14 @@ func main() {
 		if err := leCmd.Run(); err != nil {
 			log.Fatal("can't generate cert with certbot:", err)
 		}
-		if err := os.Remove(*nginxConfDir+serversList[0]+".conf"); err != nil {
-			log.Warningln("can't remove", *nginxConfDir+serversList[0]+".conf", "file, skipping")
-		}
 	}
 
 	if err := os.WriteFile(*nginxConfDir+serversList[0]+".conf", []byte(templates.HttpsConfig(resultConfig)), 0744); err != nil {
 		log.Fatal("can't create https config file:", err)
+	}
+
+	if err := os.Symlink(*nginxConfDir+serversList[0]+".conf", *nginxConfDirEnabled+serversList[0]+".conf"); err != nil {
+		log.Fatal("can't create symlink to config")
 	}
 
 	if err := RestartNginx(); err != nil {
