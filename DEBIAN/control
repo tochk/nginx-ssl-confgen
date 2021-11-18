@@ -1,5 +1,5 @@
 Package: nginx-confgen
 Version: 1.0.0
-Architecture: amd64
+Architecture: arm64
 Maintainer: Aleksei Andreev <me@tochk.ru>
 Description: Simple nginx config generator with let's encrypt support

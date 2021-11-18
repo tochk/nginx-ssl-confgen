@@ -14,13 +14,6 @@ build-arm:
 	go fmt ./...
 	GOOS=linux GOARCH=arm64 go build -o bin/nginx-confgen cmd/nginx-confgen/main.go
 
-build-deb:
-	rm -rf ${DEB_DIR}
-	mkdir -p ${DEB_DIR}/usr/local/bin/
-	cp bin/nginx-confgen ${DEB_DIR}/usr/local/bin/
-	cp -r DEBIAN ${DEB_DIR}/
-	dpkg-deb --build --root-owner-group ${DEB_DIR}
-
 build-deb-arm:
 	rm -rf ${ARM_DEB_DIR}
 	mkdir -p ${ARM_DEB_DIR}/usr/local/bin/
