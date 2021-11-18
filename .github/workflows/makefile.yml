@@ -16,7 +16,7 @@ jobs:
         go-version: 1.17
     - uses: actions/checkout@v2
     - name: Run build
-      run: make all
+      run: make all-arm
     - name: Deploy
       uses: easingthemes/ssh-deploy@main
       env:
@@ -25,10 +25,10 @@ jobs:
         REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         TARGET: ${{ secrets.REMOTE_TARGET }}
-    - name: Restart service
+    - name: Install
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.REMOTE_HOST }}
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        script: sudo dpkg -i ~/nginx-confgen_1.0.0_amd64.deb
+        script: sudo dpkg -i ~/nginx-confgen_1.0.0_arm64.deb
