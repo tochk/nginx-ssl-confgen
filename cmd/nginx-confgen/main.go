@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	nginxConfDir  = flag.String("nginx-conf-dir", "/etc/nginx/", "nginx configuration directory")
+	nginxConfDir  = flag.String("nginx-conf-dir", "/etc/nginx/sites-available/", "nginx configuration directory")
 	servers       = flag.String("servers", "", "comma-separeted domains list")
 	proxyPass     = flag.String("proxy-pass", "", "proxy pass server")
 	localDir      = flag.String("local-dir", "", "http files directory")
@@ -71,7 +71,7 @@ func main() {
 			log.Fatal("can't restart nginx:", err)
 		}
 		leArgs := make([]string, 0, (len(serversList)*2)+3)
-		leArgs = append(leArgs, "--non-interactive", "--agree-tos", "--nginx")
+		leArgs = append(leArgs, "--non-interactive", "--agree-tos", "--nginx", "--email", *email)
 		for _, srv := range serversList {
 			leArgs = append(leArgs, "-d", srv)
 		}
