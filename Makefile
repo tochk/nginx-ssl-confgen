@@ -21,6 +21,6 @@ build-deb-arm:
 	cp -r DEBIAN ${ARM_DEB_DIR}/
 	dpkg-deb --build --root-owner-group ${ARM_DEB_DIR}
 
-all: generate build build-deb
+all: generate build
 
 all-arm: generate build-arm build-deb-arm
