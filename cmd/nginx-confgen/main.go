@@ -12,7 +12,7 @@ import (
 
 var (
 	nginxConfDir        = flag.String("nginx-conf-dir", "/etc/nginx/sites-available/", "nginx sites available directory")
-	nginxConfDirEnabled = flag.String("nginx-conf-dir-enabled", "/etc/nginx/sites-available/", "nginx sites enabled directory")
+	nginxConfDirEnabled = flag.String("nginx-conf-dir-enabled", "/etc/nginx/sites-enabled/", "nginx sites enabled directory")
 	servers             = flag.String("servers", "", "comma-separeted domains list")
 	proxyPass           = flag.String("proxy-pass", "", "proxy pass server")
 	localDir            = flag.String("local-dir", "", "http files directory")
@@ -70,6 +70,7 @@ func main() {
 
 		leCmd := exec.Command("certbot", leArgs...)
 		if err := leCmd.Run(); err != nil {
+			log.Errorln("command was:", "certbot", leArgs)
 			log.Fatal("can't generate cert with certbot:", err)
 		}
 	}
@@ -79,7 +80,7 @@ func main() {
 	}
 
 	if err := os.Symlink(*nginxConfDir+serversList[0]+".conf", *nginxConfDirEnabled+serversList[0]+".conf"); err != nil {
-		log.Fatal("can't create symlink to config")
+		log.Fatal("can't create symlink to config:", err)
 	}
 
 	if err := RestartNginx(); err != nil {
