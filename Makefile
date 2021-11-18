@@ -1,6 +1,6 @@
 VERSION=1.0.0
 DEB_DIR=tmp/nginx-confgen_${VERSION}_amd64
-ARM_DEB_DIR=tmp/nginx-confgen_${VERSION}_amd64
+ARM_DEB_DIR=tmp/nginx-confgen_${VERSION}_arm64
 
 
 generate:
