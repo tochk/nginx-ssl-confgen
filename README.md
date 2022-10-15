@@ -1,30 +1,34 @@
-# Nginx config generator
+# Nginx config generator (nginx-ssl-confgen)
 
 Simple nginx config generator with let's encrypt support
 
 ## Prerequisites
 
 - Go 1.16+
-- You need to have certbot installed, if you want to use let's encrypt certificate generation.
 - Nginx
+- You need to have certbot installed, if you want to use let's encrypt certificate generation.
 
 ## Installation
 
 ### Building binary
 
 ```shell
-make build #amd64 binary
+make build-amd64 # amd64 binary
 ```
 OR
 ```shell
-make build-arm #arm binary
+make build-arm64 # arm64 binary
 ```
 
 
 ### Building deb package
 
 ```shell
-make build-deb-arm #arm deb package
+make build-deb-arm64 # arm64 deb package
+```
+OR
+```shell
+make build-deb-amd64 # amd64 deb package
 ```
 
 ## Usage
