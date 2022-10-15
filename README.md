@@ -24,11 +24,11 @@ make build-arm64 # arm64 binary
 ### Building deb package
 
 ```shell
-make build-deb-arm64 # arm64 deb package
+make build-deb-amd64 # amd64 deb package
 ```
 OR
 ```shell
-make build-deb-amd64 # amd64 deb package
+make build-deb-arm64 # arm64 deb package
 ```
 
 ## Usage
