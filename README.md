@@ -57,3 +57,9 @@ Example (with let's encrypt certificate and proxy pass):
 ```shell
 nginx-ssl-confgen -servers=tochk.net -proxy-pass=http://localhost:8080 -generate-ssl -email=me@tochk.net -agree-tos
 ```
+
+# TODO
+
+- [ ] Tests
+- [ ] Linters
+- [ ] RPM builds
