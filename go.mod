@@ -1,4 +1,4 @@
-module nginx-confgen
+module nginx-ssl-confgen
 
 go 1.16
 

@@ -1,26 +1,35 @@
 VERSION=1.1.0
-DEB_DIR=tmp/nginx-confgen_${VERSION}_amd64
-ARM_DEB_DIR=tmp/nginx-confgen_${VERSION}_arm64
+AMD_DEB_DIR=tmp/nginx-ssl-confgen_${VERSION}_amd64
+ARM_DEB_DIR=tmp/nginx-ssl-confgen_${VERSION}_arm64
 
 
 generate:
 	go generate ./...
 
-build:
+build-amd64:
 	go fmt ./...
-	GOOS=linux go build -o bin/nginx-confgen cmd/nginx-confgen/main.go
+	GOOS=linux GOARCH=amd64 go build -o bin/nginx-ssl-confgen-amd64 cmd/nginx-ssl-confgen/main.go
 
-build-arm:
+build-arm64:
 	go fmt ./...
-	GOOS=linux GOARCH=arm64 go build -o bin/nginx-confgen cmd/nginx-confgen/main.go
+	GOOS=linux GOARCH=arm64 go build -o bin/nginx-ssl-confgen-arm64 cmd/nginx-ssl-confgen/main.go
 
-build-deb-arm:
+build-deb-arm64:
 	rm -rf ${ARM_DEB_DIR}
 	mkdir -p ${ARM_DEB_DIR}/usr/local/bin/
-	cp bin/nginx-confgen ${ARM_DEB_DIR}/usr/local/bin/
-	cp -r DEBIAN ${ARM_DEB_DIR}/
+	cp bin/nginx-ssl-confgen-arm64 ${ARM_DEB_DIR}/usr/local/bin/nginx-ssl-confgen
+	cp -r deb/DEBIAN-arm64 ${ARM_DEB_DIR}/DEBIAN
 	dpkg-deb --build --root-owner-group ${ARM_DEB_DIR}
 
-all: generate build
+build-deb-amd64:
+	rm -rf ${AMD_DEB_DIR}
+	mkdir -p ${AMD_DEB_DIR}/usr/local/bin/
+	cp bin/nginx-ssl-confgen-amd64 ${AMD_DEB_DIR}/usr/local/bin/nginx-ssl-confgen
+	cp -r deb/DEBIAN-amd64 ${AMD_DEB_DIR}/DEBIAN
+	dpkg-deb --build --root-owner-group ${AMD_DEB_DIR}
 
-all-arm: generate build-arm build-deb-arm
+all-amd: generate build-amd64 build-deb-amd64
+
+all-arm: generate build-arm64 build-deb-arm64
+
+all: all-amd all-arm

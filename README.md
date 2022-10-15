@@ -30,7 +30,7 @@ make build-deb-arm #arm deb package
 ## Usage
 
 ```
-Usage of nginx-confgen:
+Usage of nginx-ssl-confgen:
   -agree-tos
         let's encrypt terms of service agreement
   -email string
@@ -55,5 +55,5 @@ Usage of nginx-confgen:
 
 Example (with let's encrypt certificate and proxy pass):
 ```shell
-nginx-confgen -servers=tochk.net -proxy-pass=http://localhost:8080 -generate-ssl -email=me@tochk.net -agree-tos
+nginx-ssl-confgen -servers=tochk.net -proxy-pass=http://localhost:8080 -generate-ssl -email=me@tochk.net -agree-tos
 ```

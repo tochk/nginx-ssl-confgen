@@ -1,4 +1,4 @@
-name: Build nginx-confgen
+name: Build nginx-ssl-confgen
 on:
   push:
     branches: [ master ]
@@ -31,4 +31,4 @@ jobs:
         host: ${{ secrets.REMOTE_HOST }}
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
-        script: sudo dpkg -i ~/nginx-confgen_1.0.2_arm64.deb
+        script: sudo dpkg -i ~/nginx-ssl-confgen_1.0.2_arm64.deb

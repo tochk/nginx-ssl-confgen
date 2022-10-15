@@ -1,5 +1,5 @@
-Package: nginx-confgen
+Package: nginx-ssl-confgen
 Version: 1.1.0
 Architecture: arm64
-Maintainer: Aleksei Andreev <me@tochk.ru>
+Maintainer: Aleksei Andreev <me@tochk.net>
 Description: Simple nginx config generator with let's encrypt support

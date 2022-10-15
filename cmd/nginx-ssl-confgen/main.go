@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"nginx-confgen/internal/app/templates"
+	"nginx-ssl-confgen/internal/app/templates"
 	"os"
 	"os/exec"
 	"strings"
@@ -67,7 +67,7 @@ func main() {
 
 	if *generateLeSSL {
 		log.Infoln("generating SSL cert")
-		if err := os.MkdirAll("/tmp/nginx-confgen/"+serversList[0], 0755); err != nil {
+		if err := os.MkdirAll("/tmp/nginx-ssl-confgen/"+serversList[0], 0755); err != nil {
 			log.Fatal("can't create tmp directory:", err)
 		}
 		if err := os.WriteFile(*nginxConfDir+serversList[0]+".conf", []byte(templates.HttpConfig(resultConfig)), 0744); err != nil {
