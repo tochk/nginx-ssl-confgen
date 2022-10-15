@@ -40,7 +40,7 @@ server {
 //line config-http.qtpl:7
 	qw422016.N().S(config.ServerNames[0])
 //line config-http.qtpl:7
-	qw422016.N().S(`/
+	qw422016.N().S(`/;
         }
 }
 `)

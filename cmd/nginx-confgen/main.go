@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	log "github.com/sirupsen/logrus"
@@ -25,6 +26,7 @@ var (
 
 func main() {
 	flag.Parse()
+	log.Infoln("checking provided flags")
 	if *servers == "" {
 		log.Fatal("servers flag must not be empty")
 	}
@@ -47,11 +49,13 @@ func main() {
 			log.Fatal("you need to determine email for using letsencrypt")
 		}
 		if !*agreeLeTos {
-			log.Fatal("you need to agree letsencrypt tos ")
+			log.Fatal("you need to agree letsencrypt tos")
 		}
 		*sslFullChain = fmt.Sprintf("/etc/letsencrypt/live/%s/fullchain.pem", serversList[0])
 		*sslPrivateKey = fmt.Sprintf("/etc/letsencrypt/live/%s/privkey.pem", serversList[0])
 	}
+
+	log.Infoln("flags checked successfully")
 
 	resultConfig := templates.NginxConfig{
 		ProxyPass:         *proxyPass,
@@ -62,17 +66,43 @@ func main() {
 	}
 
 	if *generateLeSSL {
+		log.Infoln("generating SSL cert")
+		if err := os.MkdirAll("/tmp/nginx-confgen/"+serversList[0], 0755); err != nil {
+			log.Fatal("can't create tmp directory:", err)
+		}
+		if err := os.WriteFile(*nginxConfDir+serversList[0]+".conf", []byte(templates.HttpConfig(resultConfig)), 0744); err != nil {
+			log.Fatal("can't create http config file:", err)
+		}
+		if err := os.Symlink(*nginxConfDir+serversList[0]+".conf", *nginxConfDirEnabled+serversList[0]+".conf"); err != nil {
+			log.Fatal("can't create symlink to config:", err)
+		}
+		if err := RestartNginx(); err != nil {
+			log.Fatal("can't restart nginx:", err)
+		}
 		leArgs := make([]string, 0, (len(serversList)*2)+3)
 		leArgs = append(leArgs, "--non-interactive", "--agree-tos", "--nginx", "--email", *email)
 		for _, srv := range serversList {
 			leArgs = append(leArgs, "-d", srv)
 		}
 
+		log.Infoln("running certbot")
 		leCmd := exec.Command("certbot", leArgs...)
+		var leStdOut, leStdErr bytes.Buffer
+		leCmd.Stdout = &leStdOut
+		leCmd.Stderr = &leStdErr
 		if err := leCmd.Run(); err != nil {
 			log.Errorln("command was:", "certbot", leArgs)
+			log.Errorln("certbot stdout:", leStdOut.String())
+			log.Errorln("certbot stderr:", leStdErr.String())
 			log.Fatal("can't generate cert with certbot:", err)
 		}
+		if err := os.Remove(*nginxConfDirEnabled + serversList[0] + ".conf"); err != nil {
+			log.Warningln("can't remove", *nginxConfDirEnabled+serversList[0]+".conf", "file, skipping")
+		}
+		if err := os.Remove(*nginxConfDir + serversList[0] + ".conf"); err != nil {
+			log.Warningln("can't remove", *nginxConfDir+serversList[0]+".conf", "file, skipping")
+		}
+		log.Infoln("certificates generated successfully")
 	}
 
 	if err := os.WriteFile(*nginxConfDir+serversList[0]+".conf", []byte(templates.HttpsConfig(resultConfig)), 0744); err != nil {
@@ -86,14 +116,23 @@ func main() {
 	if err := RestartNginx(); err != nil {
 		log.Fatal("can't restart nginx:", err)
 	}
+
+	log.Infoln("completed!")
 }
 
 func RestartNginx() error {
+	log.Infoln("checking nginx configuration")
 	nginxTestCmd := exec.Command("nginx", "-t")
 	if err := nginxTestCmd.Run(); err != nil {
 		return err
 	}
 
+	log.Infoln("nginx config OK, restarting nginx")
 	nginxRestartCmd := exec.Command("systemctl", "restart", "nginx")
-	return nginxRestartCmd.Run()
+	if err := nginxRestartCmd.Run(); err != nil {
+		return err
+	}
+
+	log.Infoln("nginx restarted successfully")
+	return nil
 }
