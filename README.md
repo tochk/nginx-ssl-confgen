@@ -8,6 +8,13 @@ Simple nginx config generator with let's encrypt support
 - certbot (if you want to use let's encrypt certificate generation)
 - python3-certbot-nginx (if you want to use let's encrypt certificate generation)
 
+### Ubuntu server installation
+
+```shell
+apt-get update
+apt-get install nginx certbot python3-certbot-nginx
+```
+
 ## Installation
 
 Go to releases page and download `deb` package.
