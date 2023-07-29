@@ -4,32 +4,13 @@ Simple nginx config generator with let's encrypt support
 
 ## Prerequisites
 
-- Go 1.16+
-- Nginx
-- You need to have certbot installed, if you want to use let's encrypt certificate generation.
+- nginx
+- certbot (if you want to use let's encrypt certificate generation)
+- python3-certbot-nginx (if you want to use let's encrypt certificate generation)
 
 ## Installation
 
-### Building binary
-
-```shell
-make build-amd64 # amd64 binary
-```
-OR
-```shell
-make build-arm64 # arm64 binary
-```
-
-
-### Building deb package
-
-```shell
-make build-deb-amd64 # amd64 deb package
-```
-OR
-```shell
-make build-deb-arm64 # arm64 deb package
-```
+Go to releases page and download `deb` package.
 
 ## Usage
 
@@ -59,7 +40,41 @@ Usage of nginx-ssl-confgen:
 
 Example (with let's encrypt certificate and proxy pass):
 ```shell
-nginx-ssl-confgen -servers=tochk.net -proxy-pass=http://localhost:8080 -generate-ssl -email=me@tochk.net -agree-tos
+nginx-ssl-confgen -servers=example.com -proxy-pass=http://localhost:8080 -generate-ssl -email=me@example.com -agree-tos
+```
+
+### Crontab setup (for certbot renewal)
+
+If your certbot package does not have `certbot.timer`, add the following line to the crontab for automatic certificate renewal:
+
+```cronexp
+0 6 * * * certbot renew
+```
+
+## Building
+
+### Prerequisites
+
+- go 1.20
+
+### Building binary
+
+```shell
+make build-amd64 # amd64 binary
+```
+OR
+```shell
+make build-arm64 # arm64 binary
+```
+
+### Building deb package
+
+```shell
+make build-deb-amd64 # amd64 deb package
+```
+OR
+```shell
+make build-deb-arm64 # arm64 deb package
 ```
 
 # TODO
