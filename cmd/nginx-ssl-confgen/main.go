@@ -78,6 +78,12 @@ func main() {
 		if err := os.WriteFile(*nginxConfDir+serversList[0]+".conf", []byte(templates.HttpConfig(resultConfig)), 0744); err != nil {
 			log.Fatal("can't create http config file:", err)
 		}
+		if _, err := os.Stat(*nginxConfDirEnabled + serversList[0] + ".conf"); err == nil {
+			err = os.Remove(*nginxConfDirEnabled + serversList[0] + ".conf")
+			if err != nil {
+				log.Fatal("can't remove symlink to http config file:", err)
+			}
+		}
 		if err := os.Symlink(*nginxConfDir+serversList[0]+".conf", *nginxConfDirEnabled+serversList[0]+".conf"); err != nil {
 			log.Fatal("can't create symlink to config:", err)
 		}
