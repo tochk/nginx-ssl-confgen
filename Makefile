@@ -1,6 +1,6 @@
-VERSION=1.1.0
-AMD_DEB_DIR=tmp/nginx-ssl-confgen_${VERSION}_amd64
-ARM_DEB_DIR=tmp/nginx-ssl-confgen_${VERSION}_arm64
+VERSION=1.2.0
+AMD_DEB_DIR=/tmp/nginx-ssl-confgen_${VERSION}_amd64
+ARM_DEB_DIR=/tmp/nginx-ssl-confgen_${VERSION}_arm64
 
 
 generate:
@@ -14,7 +14,7 @@ build-arm64:
 	go fmt ./...
 	GOOS=linux GOARCH=arm64 go build -o bin/nginx-ssl-confgen-arm64 cmd/nginx-ssl-confgen/main.go
 
-build-deb-arm64: build-amd64
+build-deb-arm64: build-arm64
 	rm -rf ${ARM_DEB_DIR}
 	mkdir -p ${ARM_DEB_DIR}/usr/local/bin/
 	cp bin/nginx-ssl-confgen-arm64 ${ARM_DEB_DIR}/usr/local/bin/nginx-ssl-confgen
