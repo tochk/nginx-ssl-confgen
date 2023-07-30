@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"flag"
 	"fmt"
 	log "github.com/sirupsen/logrus"
@@ -63,6 +64,10 @@ func main() {
 		SSLFullChainPath:  *sslFullChain,
 		SSLPrivateKeyPath: *sslPrivateKey,
 		LocalDir:          *localDir,
+	}
+
+	if err := checkPrefix(resultConfig.ProxyPass); err != nil {
+		log.Fatal(err)
 	}
 
 	if *generateLeSSL {
@@ -135,4 +140,17 @@ func RestartNginx() error {
 
 	log.Infoln("nginx restarted successfully")
 	return nil
+}
+
+func checkPrefix(proxyPass string) error {
+	if proxyPass == "" {
+		return nil
+	}
+
+	if strings.Contains(proxyPass, "http://") ||
+		strings.Contains(proxyPass, "https://") {
+		return nil
+	}
+
+	return errors.New("proxy_pass must contain http:// or https:// prefix, got " + proxyPass)
 }
